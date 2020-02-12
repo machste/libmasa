@@ -18,6 +18,7 @@ class MLoop
 public:
   MLoop();
   bool add_timer(MlTimer *timer);
+  void once(void);
   void run(void);
 private:
   size_t timers_len;

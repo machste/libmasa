@@ -19,14 +19,19 @@ bool MLoop::add_timer(MlTimer *timer)
   }
 }
 
+void MLoop::once(void)
+{
+  unsigned long now = millis();
+  for (int i = 0; i < timers_len; i++) {
+    if (timers[i]->active && timers[i]->due <= now) {
+      timers[i]->execute();
+    }
+  }
+}
+
 void MLoop::run(void)
 {
   while(true) {
-    unsigned long now = millis();
-    for (int i = 0; i < timers_len; i++) {
-      if (timers[i]->active && timers[i]->due <= now) {
-        timers[i]->execute();
-      }
-    }
+    once();
   }
 }
