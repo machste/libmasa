@@ -2,28 +2,29 @@
   MLoop.h - Main Loop for Arduino
 */
 
-#ifndef MLOOP_H
-#define MLOOP_H
+#ifndef M_LOOP_H
+#define M_LOOP_H
 
 #include <Arduino.h>
 
-#include "MlTimer.h"
+
+#define ML_ACTIONS_MAX 16
 
 
-#define ML_TIMER_MAX 8
+class MlAction;
 
 
 class MLoop
 {
 public:
-  MLoop();
-  bool add_timer(MlTimer *timer);
+  MLoop(void);
+  bool add(MlAction *action);
   void once(void);
   void run(void);
+
 private:
-  size_t timers_len;
-  MlTimer *timers[ML_TIMER_MAX];
+  size_t actions_len;
+  MlAction *actions[ML_ACTIONS_MAX];
 };
 
-
-#endif /* MLOOP_H */
+#endif /* M_LOOP_H */

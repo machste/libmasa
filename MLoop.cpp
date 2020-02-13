@@ -1,19 +1,21 @@
 #include "MLoop.h"
 
+#include "MlAction.h"
 
-MLoop::MLoop()
-  : timers_len(0)
+
+MLoop::MLoop(void)
+  : actions_len(0)
 {}
 
-bool MLoop::add_timer(MlTimer *timer)
+bool MLoop::add(MlAction *action)
 {
-  if (timer == NULL || timer->added) {
+  if (action == NULL || action->added) {
     return false;
   }
-  if (timers_len < ML_TIMER_MAX - 1) {
-    timers[timers_len++] = timer;
-    timer->added = true;
-    return true;
+  if (actions_len < ML_ACTIONS_MAX - 1) {
+    actions[actions_len++] = action;
+    action->added = true;
+    return action->add(this);
   } else {
     return false;
   }
@@ -22,9 +24,10 @@ bool MLoop::add_timer(MlTimer *timer)
 void MLoop::once(void)
 {
   unsigned long now = millis();
-  for (int i = 0; i < timers_len; i++) {
-    if (timers[i]->active && timers[i]->due <= now) {
-      timers[i]->execute();
+  for (int i = 0; i < actions_len; i++) {
+    if (actions[i]->active && actions[i]->check(now)) {
+      actions[i]->run();
+      actions[i]->done();
     }
   }
 }

@@ -2,39 +2,38 @@
   MlTimer.h - Timer for the Main Loop
 */
 
-#ifndef MLTIMER_H
-#define MLTIMER_H
+#ifndef ML_TIMER_H
+#define ML_TIMER_H
 
 #include <Arduino.h>
 
+#include "MlAction.h"
 
-class MlTimer
+
+class MlTimer : public MlAction
 {
 public:
   typedef enum {
     MODE_SINGLE,
     MODE_CONTINUOUS
   } Mode;
-  typedef void (*Callback)(MlTimer &self);
 
   MlTimer(MlTimer::Mode mode, unsigned long ms);
-  MlTimer(MlTimer::Mode mode, unsigned long ms, MlTimer::Callback cb);
-  bool is_added(void) { return added; };
-  bool is_active(void) { return active; } ;
+  MlTimer(MlTimer::Mode mode, unsigned long ms, MlAction::Callback run_cb);
   bool start(void);
-  bool start(unsigned long ms);
   bool stop(void);
+
 protected:
   virtual void run(void);
+
 private:
   MlTimer::Mode mode;
-  MlTimer::Callback cb;
   unsigned long ival;
-  bool added;
-  bool active;
   unsigned long due;
-  void execute(void);
+  bool check(unsigned long now);
+  void done(void);
+
   friend class MLoop;
 };
 
-#endif /* MLOOP_H */
+#endif /* ML_TIMER_H */

@@ -2,11 +2,12 @@
 
 
 MlTimer::MlTimer(MlTimer::Mode mode, unsigned long ms)
-  : mode(mode), cb(NULL), ival(ms), added(false), active(false), due(0)
+  : mode(mode), ival(ms), due(0)
 {}
 
-MlTimer::MlTimer(MlTimer::Mode mode, unsigned long ms, MlTimer::Callback cb)
-  : mode(mode), cb(cb), ival(ms), added(false), active(false), due(0)
+MlTimer::MlTimer(MlTimer::Mode mode, unsigned long ms,
+    MlAction::Callback run_cb)
+  : MlAction(run_cb), mode(mode), ival(ms), due(0)
 {}
 
 bool MlTimer::start(void)
@@ -24,16 +25,13 @@ bool MlTimer::stop(void)
   active = false;
 }
 
-void MlTimer::run(void)
+bool MlTimer::check(unsigned long now)
 {
-  if (cb != NULL) {
-    cb(*this);
-  }
+  return now >= due;
 }
 
-void MlTimer::execute(void)
+void MlTimer::done(void)
 {
-  run();
   if (mode == MODE_CONTINUOUS) {
     due = millis() + ival;
   } else {
