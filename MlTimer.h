@@ -17,9 +17,10 @@ public:
     MODE_SINGLE,
     MODE_CONTINUOUS
   } Mode;
+  typedef void (*RunCb)(MlTimer *timer, void *arg);
 
-  MlTimer(MlTimer::Mode mode, unsigned long ms);
-  MlTimer(MlTimer::Mode mode, unsigned long ms, MlAction::Callback run_cb);
+  MlTimer(Mode mode, unsigned long ms);
+  MlTimer(Mode mode, unsigned long ms, RunCb cb, void *arg=NULL);
   bool start(void);
   bool stop(void);
 
@@ -27,13 +28,14 @@ protected:
   virtual void run(void);
 
 private:
-  MlTimer::Mode mode;
+  Mode mode;
   unsigned long ival;
   unsigned long due;
+  RunCb run_cb;
+  void *run_arg;
+
   bool check(unsigned long now);
   void done(void);
-
-  friend class MLoop;
 };
 
 #endif /* ML_TIMER_H */

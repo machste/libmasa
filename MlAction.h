@@ -13,10 +13,7 @@
 class MlAction
 {
 public:
-  typedef void (*Callback)(MlAction *self);
-
   MlAction(void);
-  MlAction(MlAction::Callback run_cb);
   bool is_added(void) { return added; };
   bool is_active(void) { return active; };
 
@@ -26,11 +23,8 @@ protected:
 
   virtual bool add(MLoop *mloop) {};
   virtual bool check(unsigned long now) { return true; };
-  virtual void run(void);
+  virtual void run(void) = 0;
   virtual void done(void) {};
-
-private:
-  MlAction::Callback run_cb;
 
   friend class MLoop;
 };

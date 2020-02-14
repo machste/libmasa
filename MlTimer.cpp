@@ -1,13 +1,12 @@
 #include "MlTimer.h"
 
 
-MlTimer::MlTimer(MlTimer::Mode mode, unsigned long ms)
+MlTimer::MlTimer(Mode mode, unsigned long ms)
   : mode(mode), ival(ms), due(0)
 {}
 
-MlTimer::MlTimer(MlTimer::Mode mode, unsigned long ms,
-    MlAction::Callback run_cb)
-  : MlAction(run_cb), mode(mode), ival(ms), due(0)
+MlTimer::MlTimer(Mode mode, unsigned long ms, RunCb cb, void *arg)
+  : mode(mode), ival(ms), due(0), run_cb(cb), run_arg(arg)
 {}
 
 bool MlTimer::start(void)
@@ -28,6 +27,13 @@ bool MlTimer::stop(void)
 bool MlTimer::check(unsigned long now)
 {
   return now >= due;
+}
+
+void MlTimer::run(void)
+{
+  if (run_cb != NULL) {
+    run_cb(this, run_arg);
+  }
 }
 
 void MlTimer::done(void)
